@@ -1,7 +1,7 @@
 import { useState, createContext, useEffect, PropsWithChildren, useRef, MutableRefObject } from 'react';
 
 type ListContextType = {
-    addTask: () => void,
+    addTask: (taskTitle: string) => void,
     removeTask: () => void,
     renameTask: () => void,
     completeTask: () => void,
@@ -31,11 +31,11 @@ export class ListItemClass {
 export const ListContext = createContext<ListContextType | null>(null);
 
 export default function ListContextProvider({ children }: PropsWithChildren) {
-    const [tasks, setTasks] = useState<[] | ListItemClass[]>([new ListItemClass('Primeira tarefa'), new ListItemClass('Segunda tarefa')])
+    const [tasks, setTasks] = useState<[] | ListItemClass[]>([])
     const [selectedTask, setSelectedTask] = useState<ListItemClass | null>(null)
 
-    function addTask() {
-        setTasks((prevState) => [...prevState, new ListItemClass()])
+    function addTask(taskTitle: string) {
+        setTasks((prevState) => [...prevState, new ListItemClass(taskTitle)])
     }
 
     function removeTask() {
@@ -51,7 +51,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     function selectTask(ev:any) {
-        const taskName = ev.target.textContent;
+        const taskName = ev.currentTarget.textContent;
 
         if (selectedTask?.title === taskName) {
             return

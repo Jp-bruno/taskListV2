@@ -1,7 +1,9 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { useContext } from "react";
 import { ListContext } from '../context/ListContext';
-import { ListItemClass } from '../context/ListContext'
+import { ListItemClass } from '../context/ListContext';
+import TaskListItem from "./TaskListItem";
+import TaskListNewTaskInput from "./TaskListNewTaskInput";
 
 export default function TasksList() {
     const ListContextObject = useContext(ListContext);
@@ -11,21 +13,17 @@ export default function TasksList() {
     return (
         <List>
             {
-                listLength > 0 ? ListContextObject?.tasks.map((task) => (
-                    <ListItem key={Math.random() * 10000} disablePadding>
-                        <ListItemButton onClick={ListContextObject?.selectTask}>
-                            <ListItemText primary={(task as ListItemClass).title} />
-                        </ListItemButton>
-                    </ListItem>
-                ))
+                listLength > 0 ?
+                    ListContextObject?.tasks.map((task) => (
+                        <TaskListItem task={task} />
+                    ))
+
                     :
 
-                    <ListItem key={Math.random() * 10000} disablePadding> {/*caso a lista esteja vazia*/}
-                        <ListItemButton onClick={ListContextObject?.addTask}>
-                            <ListItemText primary={'oi'} />
-                        </ListItemButton>
-                    </ListItem>
+                    null
             }
+
+            <TaskListNewTaskInput />
         </List>
     )
 }
