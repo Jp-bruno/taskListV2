@@ -2,7 +2,7 @@ import { useState, createContext, useEffect, PropsWithChildren, useRef, MutableR
 
 type ListContextType = {
     addTask: (taskTitle: string) => void,
-    removeTask: () => void,
+    removeTask: (taskTitle: string) => void,
     renameTask: () => void,
     completeTask: () => void,
     selectTask: (ev:any) => void,
@@ -38,8 +38,8 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
         setTasks((prevState) => [...prevState, new ListItemClass(taskTitle)])
     }
 
-    function removeTask() {
-
+    function removeTask(taskTitle: string) {
+        setTasks((prevState) => prevState.filter(task => task.title !== taskTitle))
     }
 
     function renameTask() {

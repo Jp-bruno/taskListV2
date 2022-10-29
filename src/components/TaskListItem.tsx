@@ -4,14 +4,10 @@ import { useContext, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { StyledInput } from './TaskListNewTaskInput';
 
 type TaskListItemProps = {
     task: ListItemClass
-}
-
-type RenderOptionsProps = {
-    selectedItemTitle: string | undefined,
-    thisTaskTitle: string | undefined
 }
 
 const ButtonStyles = {
@@ -22,33 +18,46 @@ const ButtonStyles = {
     }
 }
 
-function RenderOptions({ selectedItemTitle, thisTaskTitle }: RenderOptionsProps) {
+function RenderOptions({ ownerTaskTitle, toggleInputMode }: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    const ListContextObject = useContext(ListContext);
 
     const open = Boolean(anchorEl);
 
-    const handleClick = (event: any) => {
+    function handleClick(event: any) {
         console.log(event.currentTarget)
 
         setAnchorEl(event.target);
     };
 
-    const handleClose = () => {
+    function handleClose(event: any) {
+        if (event.nativeEvent.srcElement.classList.contains('edit-task-button')) {
+            toggleInputMode();
+            
+            setTimeout(() => {
+                const input = document.querySelector('.new-task-title-input') as HTMLInputElement;
+                input.focus()
+            }, 100)
+        }
+
         setAnchorEl(null);
     };
 
-    if (selectedItemTitle === thisTaskTitle) {
+    const selectedItemTitle = ListContextObject?.selectedTask?.title;
+
+    if (selectedItemTitle === ownerTaskTitle) {
         return (
-            <Box sx={{zIndex: 100}}>
-                <Button onClick={handleClick} sx={{padding: 0}}>
+            <Box sx={{ zIndex: 100 }}>
+                <Button onClick={handleClick} sx={{ padding: 0 }}>
                     <MoreHorizIcon />
                 </Button>
                 <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    <MenuItem onClick={handleClose}>
-                        <EditIcon />
+                    <MenuItem onClick={handleClose} className='edit-task-button'>
+                        <EditIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <DeleteIcon />
+                    <MenuItem onClick={handleClose} className='delete-task-button'>
+                        <DeleteIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
                 </Menu>
             </Box>
@@ -58,15 +67,48 @@ function RenderOptions({ selectedItemTitle, thisTaskTitle }: RenderOptionsProps)
     return null
 }
 
+function InputMode({ toggleInputMode }: any) {
+    return (
+        <>
+            <ListItemButton sx={{ padding: 0 }}>
+                <StyledInput
+                    type='text'
+                    className='new-task-title-input'
+                    onKeyDown={() => { }}
+                // onBlur={toggleInputMode}
+                />
+            </ListItemButton>
+        </>
+    )
+}
+
 export default function TaskListItem({ task }: TaskListItemProps) {
     const ListContextObject = useContext(ListContext);
 
+    const [inputMode, setInputMode] = useState(false);
+
+    function toggleInputMode() {
+        setInputMode((prevState) => !prevState)
+    }
+
+    const renderTaskOptions = {
+        ownerTaskTitle: task.title,
+        toggleInputMode,
+    }
+
+
     return (
         <ListItem key={Math.random() * 10000} disablePadding>
-            <ListItemButton onClick={ListContextObject?.selectTask}>
-                <ListItemText primary={task.title} />
-                <RenderOptions selectedItemTitle={ListContextObject?.selectedTask?.title} thisTaskTitle={task.title} />
-            </ListItemButton>
+            {
+                inputMode ?
+                    <InputMode toggleInputMode={toggleInputMode} />
+                    :
+                    <ListItemButton onClick={ListContextObject?.selectTask}>
+                        <ListItemText primary={task.title} />
+                        <RenderOptions {...renderTaskOptions} />
+                    </ListItemButton>
+            }
+
         </ListItem>
     )
 }

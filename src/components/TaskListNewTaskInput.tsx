@@ -2,14 +2,13 @@ import { ListItem, ListItemButton, styled } from "@mui/material";
 import { ListItemClass, ListContext } from "../context/ListContext";
 import { useContext } from 'react';
 
-const StyledInput = styled('input')`
+export const StyledInput = styled('input')`
     width: 100%;
     heigth: 100%;
     padding: 15px;
     font-size: 16px;
     border: 0;
 `
-
 
 export default function TaskListNewTaskInput() {
     const ListContextObject = useContext(ListContext);
