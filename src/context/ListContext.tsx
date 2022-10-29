@@ -3,7 +3,7 @@ import { useState, createContext, useEffect, PropsWithChildren, useRef, MutableR
 type ListContextType = {
     addTask: (taskTitle: string) => void,
     removeTask: (taskTitle: string) => void,
-    renameTask: () => void,
+    renameTask: (newTaskTitle: string) => void,
     completeTask: () => void,
     selectTask: (ev:any) => void,
     selectedTask: ListItemClass | null,
@@ -40,14 +40,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
     function removeTask(taskTitle: string) {
         setTasks((prevState) => prevState.filter(task => task.title !== taskTitle))
-    }
-
-    function renameTask() {
-
-    }
-
-    function completeTask() {
-
+        setSelectedTask(() => null)
     }
 
     function selectTask(ev:any) {
@@ -59,9 +52,24 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
         const theTask = tasks.find(element => element.title === taskName);
 
-        console.log(theTask)
-
         setSelectedTask(() => theTask as ListItemClass)
+    }
+
+    function renameTask(newTaskTitle: string) {
+        const mapCallback = (task:any) => {
+            if (task.title === selectedTask?.title) {
+                task.title = newTaskTitle
+                return task
+            } else {
+                return task
+            }
+        }
+
+        setTasks((prevState) => prevState.map(mapCallback))
+    }
+
+    function completeTask() {
+
     }
 
     const providerValueObject = {

@@ -10,15 +10,7 @@ type TaskListItemProps = {
     task: ListItemClass
 }
 
-const ButtonStyles = {
-    '& .MuiListItemIcon-root': {
-        display: 'grid',
-        placeItems: 'center',
-
-    }
-}
-
-function RenderOptions({ ownerTaskTitle, toggleInputMode }: any) {
+function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const ListContextObject = useContext(ListContext);
@@ -34,11 +26,15 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode }: any) {
     function handleClose(event: any) {
         if (event.nativeEvent.srcElement.classList.contains('edit-task-button')) {
             toggleInputMode();
-            
+
             setTimeout(() => {
                 const input = document.querySelector('.new-task-title-input') as HTMLInputElement;
                 input.focus()
             }, 100)
+        }
+
+        if (event.nativeEvent.srcElement.classList.contains('delete-task-button')) {
+            removeTask(ownerTaskTitle);
         }
 
         setAnchorEl(null);
@@ -67,15 +63,33 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode }: any) {
     return null
 }
 
-function InputMode({ toggleInputMode }: any) {
+function InputMode({ toggleInputMode, renameTask, currentTaskName }: any) {
+
+    function exitInputMode(ev: any) {
+        if (ev.key === 'Escape') {
+            toggleInputMode();
+            return
+        }
+
+        if (ev.key === 'Enter') {
+            if (ev.target.value === currentTaskName) {
+                toggleInputMode();
+                return
+            }
+
+            renameTask(ev.target.value)
+            toggleInputMode();
+            return
+        }
+    }
+
     return (
         <>
             <ListItemButton sx={{ padding: 0 }}>
                 <StyledInput
                     type='text'
                     className='new-task-title-input'
-                    onKeyDown={() => { }}
-                // onBlur={toggleInputMode}
+                    onKeyDown={exitInputMode}
                 />
             </ListItemButton>
         </>
@@ -91,17 +105,23 @@ export default function TaskListItem({ task }: TaskListItemProps) {
         setInputMode((prevState) => !prevState)
     }
 
+    const inputModeOptions = {
+        toggleInputMode: toggleInputMode,
+        renameTask: ListContextObject?.renameTask,
+        currentTaskName: ListContextObject?.selectedTask?.title
+    }
+
     const renderTaskOptions = {
         ownerTaskTitle: task.title,
         toggleInputMode,
+        removeTask: ListContextObject?.removeTask
     }
-
 
     return (
         <ListItem key={Math.random() * 10000} disablePadding>
             {
                 inputMode ?
-                    <InputMode toggleInputMode={toggleInputMode} />
+                    <InputMode {...inputModeOptions} />
                     :
                     <ListItemButton onClick={ListContextObject?.selectTask}>
                         <ListItemText primary={task.title} />
