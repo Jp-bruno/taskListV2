@@ -1,7 +1,7 @@
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { List } from "@mui/material";
 import { useContext } from "react";
 import { ListContext } from '../context/ListContext';
-import { ListItemClass } from '../context/ListContext';
+import { Children } from 'react';
 import TaskListItem from "./TaskListItem";
 import TaskListNewTaskInput from "./TaskListNewTaskInput";
 
@@ -14,9 +14,11 @@ export default function TasksList() {
         <List>
             {
                 listLength > 0 ?
+                Children.toArray(
                     ListContextObject?.tasks.map((task) => (
                         <TaskListItem task={task} />
                     ))
+                )
 
                     :
 

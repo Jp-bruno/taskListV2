@@ -5,7 +5,7 @@ type ListContextType = {
     removeTask: (taskTitle: string) => void,
     renameTask: (newTaskTitle: string) => void,
     completeTask: () => void,
-    selectTask: (ev:any) => void,
+    selectTask: (ev: any) => void,
     selectedTask: ListItemClass | null,
     tasks: object[]
 }
@@ -31,11 +31,20 @@ export class ListItemClass {
 export const ListContext = createContext<ListContextType | null>(null);
 
 export default function ListContextProvider({ children }: PropsWithChildren) {
-    const [tasks, setTasks] = useState<[] | ListItemClass[]>([])
-    const [selectedTask, setSelectedTask] = useState<ListItemClass | null>(null)
+    const [tasks, setTasks] = useState<[] | ListItemClass[]>([new ListItemClass('1'), new ListItemClass('2'), new ListItemClass('3')])
+    const [selectedTask, setSelectedTask] = useState<ListItemClass | null>(null);
+
+    function taskAlreadyExits(taskTitle: string) {
+        return tasks.some(task => task.title === taskTitle)
+    }
 
     function addTask(taskTitle: string) {
-        setTasks((prevState) => [...prevState, new ListItemClass(taskTitle)])
+        if (taskAlreadyExits(taskTitle)) {
+            return
+        }
+
+        setTasks((prevState) => [...prevState, new ListItemClass(taskTitle)]);
+        return
     }
 
     function removeTask(taskTitle: string) {
@@ -43,7 +52,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
         setSelectedTask(() => null)
     }
 
-    function selectTask(ev:any) {
+    function selectTask(ev: any) {
         const taskName = ev.currentTarget.textContent;
 
         if (selectedTask?.title === taskName) {
@@ -56,7 +65,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     function renameTask(newTaskTitle: string) {
-        const mapCallback = (task:any) => {
+        const mapCallback = (task: any) => {
             if (task.title === selectedTask?.title) {
                 task.title = newTaskTitle
                 return task
@@ -73,12 +82,12 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     const providerValueObject = {
-        addTask, 
-        removeTask, 
-        renameTask, 
-        completeTask, 
-        selectTask, 
-        selectedTask, 
+        addTask,
+        removeTask,
+        renameTask,
+        completeTask,
+        selectTask,
+        selectedTask,
         tasks
     }
 

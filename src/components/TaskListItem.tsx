@@ -1,4 +1,4 @@
-import { Box, Button, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { Box, Button, ListItem, ListItemButton, ListItemText, Menu, MenuItem } from "@mui/material";
 import { ListItemClass, ListContext } from "../context/ListContext";
 import { useContext, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,27 +18,32 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
     const open = Boolean(anchorEl);
 
     function handleClick(event: any) {
-        console.log(event.currentTarget)
-
         setAnchorEl(event.target);
     };
 
-    function handleClose(event: any) {
-        if (event.nativeEvent.srcElement.classList.contains('edit-task-button')) {
+    function handleClose() {
+        setAnchorEl(null)
+    };
+
+    function deleteTask() {
+        removeTask(ownerTaskTitle);
+        handleClose()
+    }
+
+    function editTaskTitle(event: any) {
+        if ((event.type === 'keydown' && event.key === 'Enter') || event.type === 'click') {
             toggleInputMode();
 
             setTimeout(() => {
                 const input = document.querySelector('.new-task-title-input') as HTMLInputElement;
                 input.focus()
             }, 100)
+
+            handleClose()
         }
 
-        if (event.nativeEvent.srcElement.classList.contains('delete-task-button')) {
-            removeTask(ownerTaskTitle);
-        }
-
-        setAnchorEl(null);
-    };
+        return
+    }
 
     const selectedItemTitle = ListContextObject?.selectedTask?.title;
 
@@ -49,10 +54,11 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
                     <MoreHorizIcon />
                 </Button>
                 <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    <MenuItem onClick={handleClose} className='edit-task-button'>
+                    <MenuItem onClick={editTaskTitle} className='edit-task-button'>
                         <EditIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
-                    <MenuItem onClick={handleClose} className='delete-task-button'>
+
+                    <MenuItem onClick={deleteTask} className='delete-task-button'>
                         <DeleteIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
                 </Menu>
@@ -64,7 +70,6 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
 }
 
 function InputMode({ toggleInputMode, renameTask, currentTaskName }: any) {
-
     function exitInputMode(ev: any) {
         if (ev.key === 'Escape') {
             toggleInputMode();
@@ -90,6 +95,7 @@ function InputMode({ toggleInputMode, renameTask, currentTaskName }: any) {
                     type='text'
                     className='new-task-title-input'
                     onKeyDown={exitInputMode}
+                    onBlur={toggleInputMode}
                 />
             </ListItemButton>
         </>
@@ -106,29 +112,28 @@ export default function TaskListItem({ task }: TaskListItemProps) {
     }
 
     const inputModeOptions = {
-        toggleInputMode: toggleInputMode,
+        toggleInputMode,
         renameTask: ListContextObject?.renameTask,
         currentTaskName: ListContextObject?.selectedTask?.title
     }
 
     const renderTaskOptions = {
-        ownerTaskTitle: task.title,
         toggleInputMode,
+        ownerTaskTitle: task.title,
         removeTask: ListContextObject?.removeTask
     }
 
     return (
-        <ListItem key={Math.random() * 10000} disablePadding>
+        <ListItem disablePadding>
             {
                 inputMode ?
                     <InputMode {...inputModeOptions} />
                     :
-                    <ListItemButton onClick={ListContextObject?.selectTask}>
+                    <ListItemButton onClick={ListContextObject?.selectTask} onFocus={ListContextObject?.selectTask}>
                         <ListItemText primary={task.title} />
                         <RenderOptions {...renderTaskOptions} />
                     </ListItemButton>
             }
-
         </ListItem>
     )
 }
