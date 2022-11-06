@@ -1,16 +1,18 @@
 import { Box, Button, ListItem, ListItemButton, ListItemText, Menu, MenuItem } from "@mui/material";
 import { ListItemClass, ListContext } from "../context/ListContext";
 import { useContext, useState } from 'react';
+import styled from '@emotion/styled';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import CheckIcon from '@mui/icons-material/Check';
 import { StyledInput } from './TaskListNewTaskInput';
 
 type TaskListItemProps = {
     task: ListItemClass
 }
 
-function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
+function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask, completeTask }: any) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const ListContextObject = useContext(ListContext);
@@ -45,20 +47,29 @@ function RenderOptions({ ownerTaskTitle, toggleInputMode, removeTask }: any) {
         return
     }
 
+    function finishTask() {
+        completeTask();
+        handleClose();
+    }
+
     const selectedItemTitle = ListContextObject?.selectedTask?.title;
 
     if (selectedItemTitle === ownerTaskTitle) {
         return (
             <Box sx={{ zIndex: 100 }}>
                 <Button onClick={handleClick} sx={{ padding: 0 }}>
-                    <MoreHorizIcon />
+                    <MoreHorizIcon sx={{ color: 'black' }} />
                 </Button>
                 <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    <MenuItem onClick={editTaskTitle} className='edit-task-button'>
+                    <MenuItem onClick={finishTask}>
+                        <CheckIcon sx={{ pointerEvents: 'none' }} />
+                    </MenuItem>
+
+                    <MenuItem onClick={editTaskTitle}>
                         <EditIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
 
-                    <MenuItem onClick={deleteTask} className='delete-task-button'>
+                    <MenuItem onClick={deleteTask}>
                         <DeleteIcon sx={{ pointerEvents: 'none' }} />
                     </MenuItem>
                 </Menu>
@@ -102,6 +113,12 @@ function InputMode({ toggleInputMode, renameTask, currentTaskName }: any) {
     )
 }
 
+const StyledListItem = styled(ListItem)`
+    &.complete { 
+        background-color: #8bc34a;
+    }
+`
+
 export default function TaskListItem({ task }: TaskListItemProps) {
     const ListContextObject = useContext(ListContext);
 
@@ -120,20 +137,35 @@ export default function TaskListItem({ task }: TaskListItemProps) {
     const renderTaskOptions = {
         toggleInputMode,
         ownerTaskTitle: task.title,
-        removeTask: ListContextObject?.removeTask
+        removeTask: ListContextObject?.removeTask,
+        completeTask: ListContextObject?.completeTask,
     }
 
     return (
-        <ListItem disablePadding>
+        <StyledListItem disablePadding className={task.finished ? 'complete' : ''}>
             {
                 inputMode ?
                     <InputMode {...inputModeOptions} />
                     :
-                    <ListItemButton onClick={ListContextObject?.selectTask} onFocus={ListContextObject?.selectTask}>
-                        <ListItemText primary={task.title} />
-                        <RenderOptions {...renderTaskOptions} />
-                    </ListItemButton>
+                    <>
+                        <ListItemButton onClick={ListContextObject?.selectTask} onFocus={ListContextObject?.selectTask}>
+                            <ListItemText primary={task.title} />
+                            {task.finished ? null : <RenderOptions {...renderTaskOptions} />}
+                        </ListItemButton>
+                        {
+                            task.finished && (ListContextObject?.selectedTask?.title === task.title) ?
+                                <Button onClick={() => ListContextObject?.removeTask(task.title)}>
+                                    <DeleteIcon sx={{ pointerEvents: 'none', color: 'white' }} />
+                                </Button>
+
+                                :
+
+                                null
+                        }
+                    </>
+
+
             }
-        </ListItem>
+        </StyledListItem>
     )
 }

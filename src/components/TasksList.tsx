@@ -14,11 +14,11 @@ export default function TasksList() {
         <List>
             {
                 listLength > 0 ?
-                Children.toArray(
-                    ListContextObject?.tasks.map((task) => (
-                        <TaskListItem task={task} />
+
+                    ListContextObject?.tasks.map((task: any) => (
+                        <TaskListItem task={task} key={Math.random() * 2000} />
                     ))
-                )
+
 
                     :
 

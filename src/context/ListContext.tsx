@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect, PropsWithChildren, useRef, MutableRefObject } from 'react';
+import { useState, createContext, PropsWithChildren } from 'react';
 
 type ListContextType = {
     addTask: (taskTitle: string) => void,
@@ -11,7 +11,7 @@ type ListContextType = {
 }
 
 export class ListItemClass {
-    title?: string;
+    title: string;
     description?: string;
     creationDate?: string;
     finished?: boolean;
@@ -39,7 +39,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     function addTask(taskTitle: string) {
-        if (taskAlreadyExits(taskTitle)) {
+        if (taskAlreadyExits(taskTitle) || !(/\S/gi.test(taskTitle))) {
             return
         }
 
@@ -78,7 +78,16 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     function completeTask() {
+        setTasks(prevState => {
+            return prevState.map(task => {
+                if (task.title === selectedTask?.title) {
+                    task.finished = true
+                    return task
+                }
 
+                return task
+            })
+        })
     }
 
     const providerValueObject = {

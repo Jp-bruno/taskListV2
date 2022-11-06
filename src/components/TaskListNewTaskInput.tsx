@@ -1,5 +1,5 @@
 import { ListItem, ListItemButton, styled } from "@mui/material";
-import { ListItemClass, ListContext } from "../context/ListContext";
+import { ListContext } from "../context/ListContext";
 import { useContext } from 'react';
 
 export const StyledInput = styled('input')`
