@@ -1,7 +1,7 @@
 import { ListItemButton } from "@mui/material";
 import { StyledInput } from "./TaskListNewTaskInput";
 
-export default function InputMode({ toggleInputMode, renameTask, currentTaskName }: any) {
+export default function NewTaskTitleInput({ toggleInputMode, renameTask, currentTaskName }: any) {
     function exitInputMode(ev: any) {
       if (ev.key === "Escape") {
         toggleInputMode();
@@ -14,7 +14,7 @@ export default function InputMode({ toggleInputMode, renameTask, currentTaskName
           return;
         }
   
-        renameTask(ev.target.value);
+        renameTask(currentTaskName, ev.target.value);
         toggleInputMode();
         return;
       }

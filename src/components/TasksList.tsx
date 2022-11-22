@@ -15,12 +15,12 @@ export default function TasksList() {
   return (
     <List>
       {listLength > 0
-        ? ListContextObject?.tasks.map((task: any) => {
+        ? ListContextObject?.tasks.map((task:any) => {
             return (
               <TaskListItem
                 title={task.title}
                 finished={task.finished}
-                key={Math.random() * 2000}
+                key={task.title}
               />
             );
           })

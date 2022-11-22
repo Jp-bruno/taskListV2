@@ -89,14 +89,14 @@ export default function TaskDetails() {
               Salvar
             </Button>
             {selectedTask?.finished ? (
-              <Button disabled onClick={completeTask} variant="outlined">
+              <Button disabled onClick={() => completeTask()} variant="outlined">
                 Tarefa concluída!
               </Button>
             ) : (
               <Button
                 color="success"
                 variant="contained"
-                onClick={completeTask}
+                onClick={() => completeTask()}
               >
                 Completar tarefa
               </Button>

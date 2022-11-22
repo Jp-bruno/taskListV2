@@ -11,14 +11,14 @@ function getFullDateAndTime() {
 
 function writeOnTextArea(text = "") {
   const textArea = document.querySelector("#text") as HTMLTextAreaElement;
-  textArea.value = text
+  textArea.value = text;
 }
 
 export type ListContextType = {
   addTask: (taskTitle: string) => void;
-  removeTask: () => void;
-  renameTask: (newTaskTitle: string) => void;
-  completeTask: () => void;
+  removeTask: (taskTitle: string) => void;
+  renameTask: (previusTitle: string, newTaskTitle: string) => void;
+  completeTask: (taskTitle?: string) => void;
   selectTask: (ev: any) => void;
   selectedTask: Task | null;
   saveTaskDescription: () => void;
@@ -29,7 +29,7 @@ export type TaskType = {
   title: string;
   description?: string;
   creationDate?: string;
-  finished?: boolean;
+  finished: boolean;
   finishedDate?: string;
   timeout?: string;
 };
@@ -38,17 +38,10 @@ export class Task {
   title: string;
   description?: string;
   creationDate?: string;
-  finished?: boolean;
+  finished: boolean;
   finishedDate?: string;
   timeout?: string;
-  constructor(
-    title = "",
-    description = "",
-    creationDate = getFullDateAndTime(),
-    finished = false,
-    finishedDate = "--:--",
-    timeout = "--:--"
-  ) {
+  constructor(title = "", description = "", creationDate = getFullDateAndTime(), finished = false, finishedDate = "--:--", timeout = "--:--") {
     this.title = title;
     this.description = description;
     this.creationDate = creationDate;
@@ -58,16 +51,10 @@ export class Task {
   }
 }
 
-export const ListContext = createContext<ListContextType>(
-  {} as ListContextType
-);
+export const ListContext = createContext({} as ListContextType);
 
 export default function ListContextProvider({ children }: PropsWithChildren) {
-  const [tasks, setTasks] = useState<[] | Task[]>([
-    new Task("1", "primeira"),
-    new Task("2", "segunda"),
-    new Task("3", "terceira"),
-  ]);
+  const [tasks, setTasks] = useState<[] | Task[]>([new Task("Primeira tarefa", "primeira"), new Task("Segunda tarefa", "segunda"), new Task("Terceira tarefa", "terceira")]);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { handleDrawerClose } = useContext(DrawerContext);
@@ -85,38 +72,40 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     return;
   }
 
-  function removeTask() {
-
-    setTasks((prevState) =>
-      prevState.filter((task) => task.title !== selectedTask?.title)
-    );
+  function removeTask(taskTitle = selectedTask?.title) {
+    setTasks((prevState) => prevState.filter((task) => task.title !== taskTitle));
 
     setSelectedTask(() => null);
 
-    writeOnTextArea()
+    writeOnTextArea();
   }
 
   function selectTask(ev: MouseEvent) {
     const taskName = ev.currentTarget.textContent;
-    
-    
-    if (selectedTask?.title === taskName) {
-      return;
+
+    if (selectedTask?.title !== taskName) {
+      const theTask = tasks.find((element) => element.title === taskName);
+
+      saveTaskDescription();
+
+      setSelectedTask(() => theTask as Task);
+
+      handleDrawerClose();
+
+      writeOnTextArea(theTask?.description);
     }
-    
 
-    const theTask = tasks.find((element) => element.title === taskName);
-
-    setSelectedTask(() => theTask as Task);
-
-    handleDrawerClose();
-
-    writeOnTextArea(theTask?.description)
+    if ((selectedTask?.title === taskName) && (window.innerWidth < 600)) {
+      handleDrawerClose();
+      return;
+    } else {
+      return
+    }
   }
 
-  function renameTask(newTaskTitle: string) {
+  function renameTask(previusTitle: string, newTaskTitle: string) {
     const mapCallback = (task: any) => {
-      if (task.title === selectedTask?.title) {
+      if (task.title === previusTitle) {
         task.title = newTaskTitle;
         return task;
       } else {
@@ -125,27 +114,28 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     };
 
     setTasks((prevState) => prevState.map(mapCallback));
+    setSelectedTask(() => null);
   }
 
   function saveTaskDescription() {
     const textArea = document.querySelector("#text") as HTMLTextAreaElement;
 
-    setTasks(prevState => {
-      return prevState.map(task => {
-        if (task.title === selectedTask?.title) {
-          task.description = textArea.value
-          return task
-        }
-
-        return task
-      })
-    })
-  }
-
-  function completeTask() {
     setTasks((prevState) => {
       return prevState.map((task) => {
         if (task.title === selectedTask?.title) {
+          task.description = textArea.value;
+          return task;
+        }
+
+        return task;
+      });
+    });
+  }
+
+  function completeTask(taskTitle = selectedTask?.title) {
+    setTasks((prevState) => {
+      return prevState.map((task) => {
+        if (task.title === taskTitle) {
           task.finished = true;
           task.finishedDate = getFullDateAndTime();
           return task;
@@ -167,9 +157,5 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     tasks,
   };
 
-  return (
-    <ListContext.Provider value={providerValueObject}>
-      {children}
-    </ListContext.Provider>
-  );
+  return <ListContext.Provider value={providerValueObject}>{children}</ListContext.Provider>;
 }

@@ -7,20 +7,15 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 type OptionsType = {
-  ownerTaskTitle: string;
+  title: string;
+  finished: boolean;
   toggleInputMode: () => void;
   removeTask: (taskTitle: string) => void;
-  completeTask: () => void;
+  completeTask: (taskTitle: string) => void;
   selectedTask: Task | null;
 };
 
-export default function RenderOptions({
-  ownerTaskTitle,
-  toggleInputMode,
-  removeTask,
-  completeTask,
-  selectedTask,
-}: OptionsType) {
+export default function RenderOptions({ title, finished, toggleInputMode, removeTask, completeTask, selectedTask }: OptionsType) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -29,58 +24,42 @@ export default function RenderOptions({
     setAnchorEl(event.target);
   }
 
-  function handleClose() {
+  function handleTaskOptionsClose() {
     setAnchorEl(null);
   }
 
   function deleteTask() {
-    removeTask(ownerTaskTitle);
-    handleClose();
+    removeTask(title);
+    handleTaskOptionsClose();
   }
 
-  function editTaskTitle(event: MouseEvent | KeyboardEvent) {
-    if (
-      (event.type === "keydown" && (event as KeyboardEvent).key === "Enter") ||
-      event.type === "click"
-    ) {
+  function openEditTaskTitleMode(event: MouseEvent | KeyboardEvent) {
+    if ((event.type === "keydown" && (event as KeyboardEvent).key === "Enter") || event.type === "click") {
       toggleInputMode();
 
       setTimeout(() => {
-        const input = document.querySelector(
-          ".new-task-title-input"
-        ) as HTMLInputElement;
+        const input = document.querySelector(".new-task-title-input") as HTMLInputElement;
         input.focus();
       }, 100);
 
-      handleClose();
+      handleTaskOptionsClose();
     }
 
     return;
   }
 
-  function finishTask() {
-    completeTask();
-    handleClose();
+  function finishTask(taskTitle:string) {
+    completeTask(taskTitle);
+    handleTaskOptionsClose();
   }
 
-  if (selectedTask?.title === ownerTaskTitle) {
+  if (finished) {
     return (
-      <Box sx={{ zIndex: 100 }}>
-        <Button onClick={handleClick} sx={{ padding: 0 }}>
+      <Box>
+        <Button onClick={handleClick} sx={{ height: "100%" }}>
           <MoreHorizIcon sx={{ color: "black" }} />
         </Button>
-        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-          <MenuItem onClick={finishTask}>
-            <CheckIcon sx={{ pointerEvents: "none" }} />
-          </MenuItem>
-
-          <MenuItem
-            onClick={(ev) => editTaskTitle(ev)}
-            onKeyDown={(ev) => editTaskTitle(ev)}
-          >
-            <EditIcon sx={{ pointerEvents: "none" }} />
-          </MenuItem>
-
+        <Menu anchorEl={anchorEl} open={open} onClose={handleTaskOptionsClose}>
           <MenuItem onClick={deleteTask}>
             <DeleteIcon sx={{ pointerEvents: "none" }} />
           </MenuItem>
@@ -89,5 +68,24 @@ export default function RenderOptions({
     );
   }
 
-  return null;
+  return (
+    <Box>
+      <Button onClick={handleClick} sx={{ height: "100%" }}>
+        <MoreHorizIcon sx={{ color: "black" }} />
+      </Button>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleTaskOptionsClose}>
+        <MenuItem onClick={() => finishTask(title)}>
+          <CheckIcon sx={{ pointerEvents: "none" }} />
+        </MenuItem>
+
+        <MenuItem onClick={(ev) => openEditTaskTitleMode(ev)} onKeyDown={(ev) => openEditTaskTitleMode(ev)}>
+          <EditIcon sx={{ pointerEvents: "none" }} />
+        </MenuItem>
+
+        <MenuItem onClick={deleteTask}>
+          <DeleteIcon sx={{ pointerEvents: "none" }} />
+        </MenuItem>
+      </Menu>
+    </Box>
+  );
 }

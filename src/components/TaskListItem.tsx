@@ -1,15 +1,16 @@
-import { Button, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { ListContext, ListContextType } from "../context/ListContext";
 import { useContext, useState } from "react";
 import styled from "@emotion/styled";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RenderOptions from "./ListItemOptions";
-import InputMode from "./ListItemInputMode";
+import NewTaskTitleInput from "./NewTaskTitleInput";
 
 const StyledListItem = styled(ListItem)`
   &.complete {
     background-color: #8bc34a;
   }
+
+  align-items: stretch;
 `;
 
 type TaskListItemType = {
@@ -18,9 +19,9 @@ type TaskListItemType = {
 };
 
 export default function TaskListItem({ title, finished }: TaskListItemType) {
-  const { renameTask, selectTask, removeTask, completeTask, selectedTask } =
-    useContext<ListContextType>(ListContext);
+  const { renameTask, selectTask, removeTask, completeTask, selectedTask } = useContext<ListContextType>(ListContext);
 
+  //O state do inputMode fica aqui para que tanto o Input quanto as TaskOptions tenham acesso ao state
   const [inputMode, setInputMode] = useState(false);
 
   function toggleInputMode() {
@@ -29,33 +30,30 @@ export default function TaskListItem({ title, finished }: TaskListItemType) {
 
   const inputModeProps = {
     toggleInputMode,
-    renameTask: renameTask,
-    currentTaskName: selectedTask?.title,
+    renameTask,
+    currentTaskName: title,
   };
 
-  const renderTaskProps = {
+  const renderTaskOptionsProps = {
     toggleInputMode,
-    ownerTaskTitle: title,
-    removeTask: removeTask,
-    completeTask: completeTask,
-    selectedTask: selectedTask,
+    title,
+    finished,
+    removeTask,
+    completeTask,
+    selectedTask,
   };
 
   return (
     <StyledListItem disablePadding className={finished ? "complete" : ""}>
       {inputMode ? (
-        <InputMode {...inputModeProps} />
+        <NewTaskTitleInput {...inputModeProps} />
       ) : (
         <>
           <ListItemButton onClick={selectTask} onFocus={selectTask}>
             <ListItemText primary={title} />
-            {finished ? null : <RenderOptions {...renderTaskProps} />}
           </ListItemButton>
-          {finished && selectedTask?.title === title ? (
-            <Button onClick={removeTask}>
-              <DeleteIcon sx={{ pointerEvents: "none", color: "white" }} />
-            </Button>
-          ) : null}
+
+          <RenderOptions {...renderTaskOptionsProps} />
         </>
       )}
     </StyledListItem>
