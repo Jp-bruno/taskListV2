@@ -1,10 +1,10 @@
 import { Toolbar, IconButton, Typography } from "@mui/material";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import { styled } from "@mui/material/styles";
+import MenuIcon from "@mui/icons-material/Menu";
 import { ListContext } from "../context/ListContext";
 import { useContext } from "react";
-
+import { DrawerContext } from "../context/DrawerContext";
 
 const drawerWidth = window.innerWidth < 500 ? window.innerWidth : 340;
 
@@ -13,24 +13,26 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBarStyled = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
+  transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-export default function AppBarComponent({ open, handleDrawerOpen }: any) {
+export default function AppBarComponent() {
   const ListContextObject = useContext(ListContext);
+  const { open, handleDrawerOpen } =
+    useContext(DrawerContext);
 
   return (
     <AppBarStyled open={open}>
@@ -40,14 +42,16 @@ export default function AppBarComponent({ open, handleDrawerOpen }: any) {
           aria-label="open drawer"
           onClick={handleDrawerOpen}
           edge="start"
-          sx={{ mr: 2, ...(open && { display: 'none' }) }}
+          sx={{ mr: 2, ...(open && { display: "none" }) }}
         >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div">
-          {ListContextObject?.selectedTask ? ListContextObject.selectedTask.title : ''}
+          {ListContextObject?.selectedTask
+            ? ListContextObject.selectedTask.title
+            : ""}
         </Typography>
       </Toolbar>
     </AppBarStyled>
-  )
+  );
 }

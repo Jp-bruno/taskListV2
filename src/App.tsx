@@ -1,33 +1,26 @@
-import { Box, CssBaseline } from '@mui/material';
-import AppBarComponent from './components/AppBar';
-import DrawerComponent from './components/Drawer';
-import Main from './components/Main';
-import { useState } from 'react';
-import ListContextProvider from './context/ListContext';
+import { Box, CssBaseline } from "@mui/material";
+import AppBarComponent from "./components/AppBar";
+import DrawerComponent from "./components/Drawer";
+import Main from "./components/Main";
+import DrawerContextProvider from "./context/DrawerContext";
+import ListContextProvider from "./context/ListContext";
 
 function App() {
-  const [open, setOpen] = useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   return (
-    <ListContextProvider>
-        <Box sx={{ display: 'flex' }}>
+    <DrawerContextProvider>
+      <ListContextProvider>
+        <Box sx={{ display: "flex" }}>
           <CssBaseline />
 
-          <AppBarComponent open={open} handleDrawerOpen={handleDrawerOpen} />
+          <AppBarComponent />
 
-          <DrawerComponent open={open} handleDrawerClose={handleDrawerClose} />
+          <DrawerComponent />
 
-          <Main open={open} />
+          <Main />
         </Box>
-    </ListContextProvider>
+      </ListContextProvider>
+    </DrawerContextProvider>
   );
 }
 
