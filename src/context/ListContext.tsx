@@ -57,6 +57,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<[] | Task[]>([new Task("Primeira tarefa", "primeira"), new Task("Segunda tarefa", "segunda"), new Task("Terceira tarefa", "terceira")]);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  
   const { handleDrawerClose } = useContext(DrawerContext);
 
   function taskAlreadyExits(taskTitle: string) {

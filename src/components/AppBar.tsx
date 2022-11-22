@@ -30,13 +30,13 @@ const AppBarStyled = styled(MuiAppBar, {
 }));
 
 export default function AppBarComponent() {
-  const ListContextObject = useContext(ListContext);
+  const {selectedTask} = useContext(ListContext);
   const { open, handleDrawerOpen } =
     useContext(DrawerContext);
 
   return (
     <AppBarStyled open={open}>
-      <Toolbar>
+      <Toolbar sx={{background: selectedTask?.finished ? 'green' : 'black', transition: 'background 0.4s ease'}}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
@@ -47,8 +47,8 @@ export default function AppBarComponent() {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div">
-          {ListContextObject?.selectedTask
-            ? ListContextObject.selectedTask.title
+          {selectedTask
+            ? selectedTask.title
             : ""}
         </Typography>
       </Toolbar>

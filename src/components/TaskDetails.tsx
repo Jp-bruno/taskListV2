@@ -7,7 +7,7 @@ const StyledDetails = styled("div")`
   text-align: center;
   flex-basis: 1;
   height: 210px;
-  transition: height 0.5s ease;
+  transition: height 0.5s ease, backgroun-color 0.3s ease;
 
   .content {
     display: flex;
@@ -56,6 +56,10 @@ const StyledDetails = styled("div")`
   &.details-closed {
     height: 0;
   }
+
+  &.green {
+    background-color: #57fc576a;
+  }
 `;
 
 export default function TaskDetails() {
@@ -63,7 +67,7 @@ export default function TaskDetails() {
     useContext<ListContextType>(ListContext);
 
   return (
-    <StyledDetails className={selectedTask ? "details-open" : "details-closed"}>
+    <StyledDetails className={`${selectedTask ? "details-open" : "details-closed"} ${selectedTask?.finished ? 'green' : ''}`}>
       {selectedTask ? (
         <div className="content">
           <div className="content-data">
