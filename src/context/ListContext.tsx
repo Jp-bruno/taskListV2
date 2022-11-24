@@ -1,4 +1,4 @@
-import { useState, createContext, PropsWithChildren, useContext, MouseEvent } from "react";
+import { useState, createContext, PropsWithChildren, useContext, MouseEvent, useEffect } from "react";
 import { DrawerContext } from "./DrawerContext";
 
 function getFullDateAndTime() {
@@ -73,12 +73,25 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    setTasks((prevState) => [...prevState, new Task(taskTitle)]);
+    setTasks((prevState) => {
+      const newTasksArray = [...prevState, new Task(taskTitle)];
+
+      window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
+
+      return newTasksArray;
+    });
+
     return;
   }
 
   function removeTask(taskTitle = selectedTask?.title) {
-    setTasks((prevState) => prevState.filter((task: any) => task.title !== taskTitle));
+    setTasks((prevState) => {
+      const newTasksArray = prevState.filter((task: any) => task.title !== taskTitle);
+
+      window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
+
+      return newTasksArray;
+    });
 
     setSelectedTask(() => null);
 
@@ -127,7 +140,14 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
       }
     };
 
-    setTasks((prevState) => prevState.map(mapCallback));
+    setTasks((prevState) => {
+      const newTasksArray = prevState.map(mapCallback);
+
+      window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
+
+      return newTasksArray;
+    });
+
     setSelectedTask(() => null);
   }
 
@@ -135,7 +155,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     const textArea = document.querySelector("#text") as HTMLTextAreaElement;
 
     setTasks((prevState) => {
-      return prevState.map((task) => {
+      const newTasksArray = prevState.map((task) => {
         if (task.title === selectedTask?.title) {
           task.description = textArea.value;
           return task;
@@ -143,12 +163,16 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
         return task;
       });
+
+      window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
+
+      return newTasksArray;
     });
   }
 
   function completeTask(taskTitle = selectedTask?.title) {
     setTasks((prevState) => {
-      return prevState.map((task: any) => {
+      const newTasksArray = prevState.map((task: any) => {
         if (task.title === taskTitle) {
           task.finished = true;
           task.finishedDate = getFullDateAndTime();
@@ -157,6 +181,10 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
         return task;
       });
+
+      window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
+
+      return newTasksArray;
     });
   }
 
@@ -170,6 +198,11 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     selectedTask,
     tasks,
   };
+
+  useEffect(() => {
+    const localStorageTasks = JSON.parse(window.localStorage.getItem("tasks") as string)
+    setTasks(localStorageTasks)
+  }, [])
 
   return <ListContext.Provider value={providerValueObject}>{children}</ListContext.Provider>;
 }
