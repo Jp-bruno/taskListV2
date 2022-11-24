@@ -57,11 +57,15 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<[] | Task[]>([new Task("Primeira tarefa", "primeira"), new Task("Segunda tarefa", "segunda"), new Task("Terceira tarefa", "terceira")]);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  
+
   const { toggleDrawer } = useContext(DrawerContext);
 
   function taskAlreadyExits(taskTitle: string) {
-    return tasks.some((task) => task.title === taskTitle);
+    return tasks.some((task: any) => task.title === taskTitle);
+  }
+
+  function taskAlreadySelected(taskTitle: string) {
+    return selectedTask?.title === taskTitle ? true : false;
   }
 
   function addTask(taskTitle: string) {
@@ -74,34 +78,43 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   }
 
   function removeTask(taskTitle = selectedTask?.title) {
-    setTasks((prevState) => prevState.filter((task) => task.title !== taskTitle));
+    setTasks((prevState) => prevState.filter((task: any) => task.title !== taskTitle));
 
     setSelectedTask(() => null);
 
     writeOnTextArea();
   }
 
-  function selectTask(ev: MouseEvent) {
-    const taskName = ev.currentTarget.textContent;
+  async function selectTask(ev: MouseEvent) {
+    const taskName = ev.currentTarget.textContent as string;
 
-    if (selectedTask?.title !== taskName) {
-      const theTask = tasks.find((element) => element.title === taskName);
+    if (window.innerWidth > 900) {
+      if (taskAlreadySelected(taskName)) {
+        return;
+      }
 
-      saveTaskDescription();
+      const theTask = tasks.find((task: any) => task.title === taskName);
 
-      setSelectedTask(() => theTask as Task);
-
-      toggleDrawer();
-
+      saveTaskDescription(); //save the current task description
+      setSelectedTask(() => theTask as Task); //set the current task to the selected one
       writeOnTextArea(theTask?.description);
+
+      return;
     }
 
-    if ((selectedTask?.title === taskName) && (window.innerWidth < 600)) {
+    if (taskAlreadySelected(taskName)) {
       toggleDrawer();
       return;
-    } else {
-      return
     }
+
+    const theTask = tasks.find((task: any) => task.title === taskName);
+
+    saveTaskDescription();
+    setSelectedTask(() => theTask as Task);
+    writeOnTextArea(theTask?.description);
+    toggleDrawer();
+
+    return;
   }
 
   function renameTask(previusTitle: string, newTaskTitle: string) {
@@ -135,7 +148,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
   function completeTask(taskTitle = selectedTask?.title) {
     setTasks((prevState) => {
-      return prevState.map((task) => {
+      return prevState.map((task: any) => {
         if (task.title === taskTitle) {
           task.finished = true;
           task.finishedDate = getFullDateAndTime();

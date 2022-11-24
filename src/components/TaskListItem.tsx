@@ -49,7 +49,7 @@ export default function TaskListItem({ title, finished }: TaskListItemType) {
         <NewTaskTitleInput {...inputModeProps} />
       ) : (
         <>
-          <ListItemButton onClick={selectTask} onFocus={selectTask}>
+          <ListItemButton onClick={selectTask}>
             <ListItemText primary={title} />
           </ListItemButton>
 
