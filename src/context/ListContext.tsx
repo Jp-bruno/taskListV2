@@ -22,7 +22,7 @@ export type ListContextType = {
   selectTask: (ev: any) => void;
   selectedTask: Task | null;
   saveTaskDescription: () => void;
-  tasks: object[];
+  tasks: Task[];
 };
 
 export type TaskType = {
@@ -54,7 +54,7 @@ export class Task {
 export const ListContext = createContext({} as ListContextType);
 
 export default function ListContextProvider({ children }: PropsWithChildren) {
-  const [tasks, setTasks] = useState<[] | Task[]>([new Task("Primeira tarefa", "primeira"), new Task("Segunda tarefa", "segunda"), new Task("Terceira tarefa", "terceira")]);
+  const [tasks, setTasks] = useState<[] | Task[]>([new Task("Primeira tarefa", "primeira")]);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
