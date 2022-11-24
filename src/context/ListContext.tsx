@@ -85,7 +85,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     writeOnTextArea();
   }
 
-  async function selectTask(ev: MouseEvent) {
+  function selectTask(ev: MouseEvent) {
     const taskName = ev.currentTarget.textContent as string;
 
     if (window.innerWidth > 900) {

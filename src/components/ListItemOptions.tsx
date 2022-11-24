@@ -1,6 +1,5 @@
 import { Box, Button, Menu, MenuItem } from "@mui/material";
 import { KeyboardEvent, MouseEvent, useState } from "react";
-import { Task } from "../context/ListContext";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CheckIcon from "@mui/icons-material/Check";
@@ -12,10 +11,9 @@ type OptionsType = {
   toggleInputMode: () => void;
   removeTask: (taskTitle: string) => void;
   completeTask: (taskTitle: string) => void;
-  selectedTask: Task | null;
 };
 
-export default function RenderOptions({ title, finished, toggleInputMode, removeTask, completeTask, selectedTask }: OptionsType) {
+export default function RenderOptions({ title, finished, toggleInputMode, removeTask, completeTask }: OptionsType) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
