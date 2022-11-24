@@ -7,7 +7,7 @@ import TaskListNewTaskInput from "./TaskListNewTaskInput";
 export default function TasksList() {
   const { tasks } = useContext(ListContext);
 
-  const listLength = tasks.length === undefined ? 0 : tasks.length;
+  const listLength = tasks.length === null ? 0 : tasks.length;
 
   return (
     <List>
