@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/taskListV2/static/js/main.2b1b40d6.js",
+    "main.js": "/taskListV2/static/js/main.bacfdbc7.js",
     "index.html": "/taskListV2/index.html",
-    "main.2b1b40d6.js.map": "/taskListV2/static/js/main.2b1b40d6.js.map"
+    "main.bacfdbc7.js.map": "/taskListV2/static/js/main.bacfdbc7.js.map"
   },
   "entrypoints": [
-    "static/js/main.2b1b40d6.js"
+    "static/js/main.bacfdbc7.js"
   ]
 }
