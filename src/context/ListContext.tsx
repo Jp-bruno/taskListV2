@@ -200,9 +200,11 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   };
 
   useEffect(() => {
-    const localStorageTasks = JSON.parse(window.localStorage.getItem("tasks") as string)
-    setTasks(localStorageTasks)
-  }, [])
+    setTimeout(() => {
+      const localStorageTasks = JSON.parse(window.localStorage.getItem("tasks") as string);
+      setTasks(localStorageTasks);
+    }, 5000);
+  }, []);
 
   return <ListContext.Provider value={providerValueObject}>{children}</ListContext.Provider>;
 }
