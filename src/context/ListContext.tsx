@@ -61,7 +61,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   const { toggleDrawer } = useContext(DrawerContext);
 
   function taskAlreadyExits(taskTitle: string) {
-    return tasks.some((task: any) => task.title === taskTitle);
+    return tasks?.some((task: any) => task.title === taskTitle);
   }
 
   function taskAlreadySelected(taskTitle: string) {
@@ -106,7 +106,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      const theTask = tasks.find((task: any) => task.title === taskName);
+      const theTask = tasks?.find((task: any) => task.title === taskName);
 
       saveTaskDescription(); //save the current task description
       setSelectedTask(() => theTask as Task); //set the current task to the selected one
@@ -120,7 +120,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const theTask = tasks.find((task: any) => task.title === taskName);
+    const theTask = tasks?.find((task: any) => task.title === taskName);
 
     saveTaskDescription();
     setSelectedTask(() => theTask as Task);
@@ -200,10 +200,8 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      const localStorageTasks = JSON.parse(window.localStorage.getItem("tasks") as string);
-      setTasks(localStorageTasks);
-    }, 5000);
+    const localStorageTasks = JSON.parse(window.localStorage.getItem("tasks") as string);
+    setTasks(localStorageTasks);
   }, []);
 
   return <ListContext.Provider value={providerValueObject}>{children}</ListContext.Provider>;

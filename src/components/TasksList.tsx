@@ -12,10 +12,10 @@ export default function TasksList() {
   return (
     <List>
       {listLength > 0
-        ? tasks.map((task: any) => {
+        ? tasks?.map((task: any) => {
             return <TaskListItem title={task.title} finished={task.finished} key={task.title} />;
           })
-        : null}
+        : null} 
 
       <TaskListNewTaskInput />
     </List>
