@@ -58,7 +58,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   
-  const { handleDrawerClose } = useContext(DrawerContext);
+  const { toggleDrawer } = useContext(DrawerContext);
 
   function taskAlreadyExits(taskTitle: string) {
     return tasks.some((task) => task.title === taskTitle);
@@ -91,13 +91,13 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
       setSelectedTask(() => theTask as Task);
 
-      handleDrawerClose();
+      toggleDrawer();
 
       writeOnTextArea(theTask?.description);
     }
 
     if ((selectedTask?.title === taskName) && (window.innerWidth < 600)) {
-      handleDrawerClose();
+      toggleDrawer();
       return;
     } else {
       return

@@ -31,7 +31,7 @@ const AppBarStyled = styled(MuiAppBar, {
 
 export default function AppBarComponent() {
   const {selectedTask} = useContext(ListContext);
-  const { open, handleDrawerOpen } =
+  const { open, toggleDrawer } =
     useContext(DrawerContext);
 
   return (
@@ -40,7 +40,7 @@ export default function AppBarComponent() {
         <IconButton
           color="inherit"
           aria-label="open drawer"
-          onClick={handleDrawerOpen}
+          onClick={toggleDrawer}
           edge="start"
           sx={{ mr: 2, ...(open && { display: "none" }) }}
         >

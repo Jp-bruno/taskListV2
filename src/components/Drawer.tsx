@@ -12,7 +12,7 @@ const drawerWidth = window.innerWidth < 500 ? window.innerWidth : 340;
 export default function DrawerComponent() {
   const theme = useTheme();
 
-  const { open, handleDrawerClose } =
+  const { open, toggleDrawer } =
     useContext(DrawerContext);
 
   return (
@@ -33,7 +33,7 @@ export default function DrawerComponent() {
         <Typography variant="h5" align="left">
           Tarefas
         </Typography>
-        <IconButton onClick={handleDrawerClose}>
+        <IconButton onClick={toggleDrawer}>
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />
           ) : (
