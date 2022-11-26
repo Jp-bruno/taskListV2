@@ -74,7 +74,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     setTasks((prevState) => {
-      const newTasksArray = [...prevState, new Task(taskTitle)];
+      const newTasksArray = prevState === null ? [new Task(taskTitle)] : [...prevState, new Task(taskTitle)];
 
       window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
 
@@ -120,7 +120,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    const theTask = tasks?.find((task: any) => task.title === taskName);
+    const theTask = tasks?.find((task: any) => task?.title === taskName);
 
     saveTaskDescription();
     setSelectedTask(() => theTask as Task);
@@ -132,7 +132,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
   function renameTask(previusTitle: string, newTaskTitle: string) {
     const mapCallback = (task: any) => {
-      if (task.title === previusTitle) {
+      if (task?.title === previusTitle) {
         task.title = newTaskTitle;
         return task;
       } else {
@@ -147,8 +147,6 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
 
       return newTasksArray;
     });
-
-    setSelectedTask(() => null);
   }
 
   function saveTaskDescription() {
