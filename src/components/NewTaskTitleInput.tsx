@@ -14,7 +14,7 @@ export default function NewTaskTitleInput({ toggleInputMode, renameTask, current
           return;
         }
   
-        renameTask(ev, currentTaskName, ev.target.value);
+        renameTask(currentTaskName, ev.target.value);
         toggleInputMode();
         return;
       }

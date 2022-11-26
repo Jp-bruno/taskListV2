@@ -74,7 +74,7 @@ export default function ListContextProvider({ children }: PropsWithChildren) {
     }
 
     setTasks((prevState) => {
-      const newTasksArray = prevState === null ? [new Task(taskTitle)] : [...prevState, new Task(taskTitle)];
+      const newTasksArray = prevState === null || prevState[0] === undefined ? [new Task(taskTitle)] : [...prevState, new Task(taskTitle)];
 
       window.localStorage.setItem("tasks", JSON.stringify(newTasksArray));
 
